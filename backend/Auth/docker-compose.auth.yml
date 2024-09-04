@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  auth:
+    build:
+      context:
+        dockerfile: Dockerfile
+    container_name: auth_service
+    environment:
+      - FLASK_ENV=development
+      - SECRET_KEY='wPk4epct1fRJuYwvMlEwGQ'
+      - SQLALCHEMY_DATABASE_URI=sqlite:///database/auth.db
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+    networks:
+      - talknow-network
+
+networks:
+  talknow-network:
+    driver: bridge
