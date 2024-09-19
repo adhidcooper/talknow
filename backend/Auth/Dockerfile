@@ -1,17 +1,9 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
-WORKDIR /app
-
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-RUN mkdir database
-
-COPY . .
-
-EXPOSE 5001
-
-ENV FLASK_APP=app.py
-
-CMD ["python", "app.py"]
+COPY requirements.txt /Auth_app/requirements.txt
+WORKDIR /Auth_app
+RUN pip install -r requirements.txt
+COPY . /Auth_app
+ENTRYPOINT [ "python" ]
+CMD ["app.py"]
