@@ -1,6 +1,7 @@
 package com.talknow.message.mapper;
 
 import com.talknow.message.dto.ContentDto;
+import com.talknow.message.entity.Channel;
 import com.talknow.message.entity.Content;
 
 public class ContentMapper {
@@ -9,7 +10,6 @@ public class ContentMapper {
             return null;
         }
         contentDto.setMessage(content.getMessage());
-//        contentDto.setChannelId(content.getChannel().getChannelId());
         contentDto.setCreatedBy(content.getCreatedBy());
         contentDto.setCreatedTime(content.getCreatedTime());
         return contentDto;
@@ -19,6 +19,7 @@ public class ContentMapper {
         if (content == null|| contentDto == null ) {
             return null;
         }
+        content.setContentId(contentDto.getChannelId());
         content.setMessage(contentDto.getMessage());
         content.setCreatedBy(contentDto.getCreatedBy());
         content.setUserId(contentDto.getUserId());

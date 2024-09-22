@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
 public class Channel extends BaseEntity {
     @Id
-    @Column(length = 255, name = "channel_id")
+    @Column(name = "channel_id")
     private String channelId = UUID.randomUUID().toString();
 
     @Column(nullable = false)

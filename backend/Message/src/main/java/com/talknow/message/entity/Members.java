@@ -13,12 +13,14 @@ import java.util.UUID;
 @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
 public class Members {
     @Id
-    @Column(length = 255)
+    @Column(name = "member_id")
     private String memberId = UUID.randomUUID().toString();
 
+    @Column(name = "user_id")
     private String userId;
 
-    @ManyToOne
-    @JoinColumn(name="channel_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "channel_id", nullable = false)
+    @ToString.Exclude
     private Channel channel;
 }

@@ -1,15 +1,20 @@
 package com.talknow.message.controller;
 
+import com.talknow.message.constants.ContentConstants;
 import com.talknow.message.dto.ContentDto;
+import com.talknow.message.dto.ResponseDto;
 import com.talknow.message.service.IChannelService;
 import com.talknow.message.service.IContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping(value = "api/message", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class ContentController {
 
 
@@ -20,10 +25,10 @@ public class ContentController {
         this.contentService = contentService;
     }
 
-    @PostMapping
-    public ResponseEntity<ContentDto> createContent(@RequestBody ContentDto contentDto) {
+    @PostMapping(value = "/send")
+    public ResponseEntity<ResponseDto>createContent(@RequestBody ContentDto contentDto) {
         ContentDto createdContent = contentService.createContent(contentDto);
-        return new ResponseEntity<>(createdContent, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(ContentConstants.statusCode200,ContentConstants.statusCode201, createdContent));
     }
 
     @GetMapping("/{id}")

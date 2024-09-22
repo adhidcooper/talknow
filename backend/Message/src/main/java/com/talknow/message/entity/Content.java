@@ -13,9 +13,9 @@ import java.util.UUID;
 @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
 public class Content extends BaseEntity {
     @Id
-    @Column(length = 255)
+    @Column(name = "content_id")
     private String contentId = UUID.randomUUID().toString();
-
+    @Column(name = "user_id")
     private String userId;
     private String message;
 

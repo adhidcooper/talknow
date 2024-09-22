@@ -33,7 +33,8 @@ def create_user():
         user = Auth()
         user.username = request.form['username']
         user.email = request.form['email']
-        user.password = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
+        user.password = generate_password_hash(
+            request.form['password'], method='pbkdf2:sha256')
         user.is_auth = True
         user.created_date = datetime.now()
         db.session.add(user)
@@ -54,16 +55,19 @@ def create_user():
 
 @auth_blueprint.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    data = request.get_json()  # Get JSON data instead of form data
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        response = {'message': 'Username or password missing'}
+        return make_response(jsonify(response), 400)
 
     user = Auth.query.filter_by(username=username).first()
     if not user:
-        response = {
-            'message': 'User not found!'
-        }
-        status = 401
-        make_response(jsonify(response), status)
+        response = {'message': 'User not found!'}
+        return make_response(jsonify(response), 401)
+
     if check_password_hash(user.password, password):
         user.update_api_key()
         db.session.commit()
@@ -74,33 +78,10 @@ def login():
             'api_key': user.api_key,
             'authenticated': user.authenticated
         }
-        status = 200
-        return make_response(jsonify(response), status)
+        return make_response(jsonify(response), 200)
 
-    response = {
-        'message': 'Access Denied!',
-    }
-    status = 401
-    return make_response(jsonify(response), status)
-
-
-@auth_blueprint.route('/logout', methods=['POST'])
-def logout():
-    # print("the current User "+ current_user.is_authenticated)
-    if current_user.is_authenticated:
-        logout_user()
-        # print(current_user)
-        status = 200
-        current_user.is_auth = False
-        response = {
-            "message": "User Logged Out!"
-        }
-        return make_response(jsonify(response), status)
-    status = 401
-    response = {
-        "message": "No User Logged In!"
-    }
-    return make_response(jsonify(response), status)
+    response = {'message': 'Access Denied!'}
+    return make_response(jsonify(response), 401)
 
 
 @auth_blueprint.route('/fetch/<username>', methods=['GET'])

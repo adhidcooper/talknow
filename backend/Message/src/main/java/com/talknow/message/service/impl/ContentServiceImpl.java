@@ -18,6 +18,7 @@ public class ContentServiceImpl implements IContentService {
 
     @Autowired
     public ContentServiceImpl(ContentRepository contentRepository) {
+
         this.contentRepository = contentRepository;
     }
 
