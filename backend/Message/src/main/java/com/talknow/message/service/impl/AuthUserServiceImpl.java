@@ -15,10 +15,10 @@ import org.springframework.web.client.RestTemplate;
 public class AuthUserServiceImpl implements IAuthUserService {
     private RestTemplate restTemplate;
     @Override
-    public UserDto getCurrentUser() {
+    public UserDto getCurrentUser(String api_key) {
         HttpHeaders headers = new HttpHeaders();
         String url = "http://127.0.0.1:5001/api/user/";
-        String token = "t5PMPhRv3AMHFLjQyhLrmjSxpVoPNi7f";
+        String token = api_key;
         headers.set("Authorization", token);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 

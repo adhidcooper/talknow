@@ -7,8 +7,9 @@ CREATE TABLE IF NOT EXISTS `channel` (
 );
 
 CREATE TABLE IF NOT EXISTS`members` (
-    `members_id` Varchar(255) PRIMARY KEY,
-    `user_id` varchar(255), `channel_id` varchar(255),
+    `member_id` Varchar(255) PRIMARY KEY,
+    `user_id` varchar(255),
+    `channel_id` varchar(255),
     FOREIGN KEY (channel_id) REFERENCES `channel` (channel_id)
 );
 

@@ -1,20 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import SignUp from './pages/SignUp';
-import { Provider } from 'react-redux';
-import store from './app/store';
+import Channels from './pages/Channels';
 
 
 const App:React.FC = () => {
 
   return (
-    // <div>
-    //   <h1>Welcome to TalkNow Chat App</h1>
-    //   {!api_key ? (<Login setApiKey={setApi_key}/>) : (<UserInfo  apiKey={api_key}/>)}
-    // </div>
-    <Provider store={store}>
+    
       <Router>
         <Routes>
           {/* Route for login */}
@@ -26,11 +21,13 @@ const App:React.FC = () => {
           {/* Dashboard route (Protected Route) */}
           <Route path='/dashboard' element={<Dashboard />} />
 
+          {/* Channels Route */}
+          <Route path='/channels' element={<Channels />} />
+
           {/* Redirect to login if unknown route */}
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
-    </Provider>
   )
 }
 

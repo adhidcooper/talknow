@@ -6,7 +6,7 @@ authService:
   url: 127.0.0.1
   port: 5001
   getUser: api/user/
-  authToken: "t5PMPhRv3AMHFLjQyhLrmjSxpVoPNi7f"
+
 
 spring:
   application:

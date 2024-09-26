@@ -1,19 +1,29 @@
 // src/features/auth/authAPI.ts
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:5001/api/user';
+
+const AUTH_SERVICE_URL = 'http://127.0.0.1:5001';
+const AUTH_DIR = 'api/user'
 
 export const login = async (username: string, password: string) => {
-    const response = await axios.post(`${API_URL}/login`, new URLSearchParams({ username, password }), { headers: { "Content-Type": "application/json"}});
+    const response = await axios.post(`${AUTH_SERVICE_URL}/${AUTH_DIR}/login`, { "username": username, "password": password });
+    console.log(response.data)
     return response.data;
+    
 };
 
-export const signup = async (username: string, password: string, email: string) => {
-    const response = await axios.post(`${API_URL}/create`, new URLSearchParams({ username, password, email }));
+export const signup = async (username: string, email: string, password: string,) => {
+    const response = await axios.post(`${AUTH_SERVICE_URL}/${AUTH_DIR}/create`, { "username": username, "email":email, "password": password }, { headers : {
+        "Content-Type": "application/json"
+    }});
+    console.log(response.data)
     return response.data;
 };
 
 export const fetchUserInfo = async (apiKey: string) => {
-    const response = await axios.get(`${API_URL}/`, { headers: { Authorization: apiKey } });
+    const response = await axios.get(`${AUTH_SERVICE_URL}/${AUTH_DIR}/`, { headers: {
+        "Content-Type": "application/json",
+        "Authorization": apiKey
+    } });
     return response.data;
 };

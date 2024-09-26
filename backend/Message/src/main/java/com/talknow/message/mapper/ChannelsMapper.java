@@ -1,6 +1,7 @@
 package com.talknow.message.mapper;
 
 import com.talknow.message.dto.ChannelDto;
+import com.talknow.message.dto.UserDto;
 import com.talknow.message.entity.Channel;
 
 import java.time.LocalDateTime;
@@ -19,13 +20,13 @@ public class ChannelsMapper {
         return channelDto;
     }
 
-    public static Channel mapToChannel(ChannelDto channelDto, Channel channel) {
+    public static Channel mapToChannel(ChannelDto channelDto, Channel channel, String username) {
         if (channelDto == null || channel == null) {
             return null; // Check for null values
         }
         channel.setChannelName(channelDto.getChannelName());
-        channel.setCreatedTime(channelDto.getCreatedTime());
-        channel.setCreatedBy(channelDto.getCreatedBy());
+        channel.setCreatedTime(LocalDateTime.now());
+        channel.setCreatedBy(username);
         channel.setChannelOpen(channelDto.getChannelOpen());
         return channel;
     }

@@ -16,5 +16,6 @@ public class BaseEntity {
     private String createdBy;
 
     @Column(updatable = false, name = "created_time")
-    private LocalDateTime createdTime;
+    private LocalDateTime createdTime = LocalDateTime.now();
+
 }

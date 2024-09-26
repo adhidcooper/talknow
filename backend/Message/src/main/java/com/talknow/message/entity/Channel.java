@@ -19,10 +19,10 @@ public class Channel extends BaseEntity {
 
     @Column(nullable = false)
     private String channelName;
-    private Boolean channelOpen;
+    private Boolean channelOpen = false;
 
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Members> members;
+    private List<Members> members ;
 
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Content> content;

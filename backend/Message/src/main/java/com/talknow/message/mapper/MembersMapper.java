@@ -15,13 +15,12 @@ public class MembersMapper {
         return membersDto;
     }
 
-    public static Members mapToMembers(MembersDto membersDto, Members members, Channel channel) {
-        if (members == null || membersDto == null) {
+    public static Members mapToMembers(Members members, Channel channel, String userId) {
+        if (members == null) {
             return null;
         }
-//        members.setMemberId();
         members.setChannel(channel);
-        members.setUserId(membersDto.getUserId());
+        members.setUserId(userId);
         return members;
     }
 }

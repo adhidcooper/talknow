@@ -7,6 +7,7 @@ import com.talknow.message.dto.ResponseDto;
 import com.talknow.message.entity.Members;
 import com.talknow.message.service.IChannelService;
 import com.talknow.message.service.IMembersService;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,11 +28,14 @@ public class ChannelController {
         this.channelService = contentService;
     }
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+
     // Create a new channel
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(value = "/create")
-    public ResponseEntity<ResponseDto> createChannel (@RequestBody ChannelDto channelDto) {
-        ChannelDto createdChannel = channelService.createChannel(channelDto);
-        String id = createdChannel.getChannelId();
+    public ResponseEntity<ResponseDto> createChannel (@RequestBody ChannelDto channelDto,@RequestHeader("Authorization") String api_key) {
+        ChannelDto createdChannel = channelService.createChannel(channelDto, api_key);
+//        String id = createdChannel.getChannelId();
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -40,7 +44,7 @@ public class ChannelController {
 
     // Get a channel by ID
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto> getChannelById(@PathVariable String id) {
+    public ResponseEntity<ResponseDto> getChannelById (@PathVariable String id) {
         ChannelDto channelDto = channelService.getChannelById(id);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(ContentConstants.getChannelMsg,ContentConstants.statusCode200, channelDto));
     }
@@ -52,6 +56,7 @@ public class ChannelController {
     }
 
     // Get all channels
+    @CrossOrigin(origins = "http://localhost:5173/")
     @GetMapping(value = "/all")
     public ResponseEntity<ResponseDto> getAllChannels() {
         List<ChannelDto> channels = channelService.getAllChannels();
@@ -59,9 +64,10 @@ public class ChannelController {
     }
 
     // Update a channel by ID
+    @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto> updateChannel(@PathVariable String id, @RequestBody ChannelDto channelDto) {
-        ChannelDto updatedChannel = channelService.updateChannel(id, channelDto);
+    public ResponseEntity<ResponseDto> updateChannel(@PathVariable String id, @RequestBody ChannelDto channelDto, @RequestHeader("Authorization") String api_key) {
+        ChannelDto updatedChannel = channelService.updateChannel(id, channelDto, api_key);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(ContentConstants.updatedChannelDetailsMsg, ContentConstants.statusCode200, updatedChannel));
     }
 

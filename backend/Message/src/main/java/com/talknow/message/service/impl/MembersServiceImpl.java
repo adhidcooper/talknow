@@ -26,39 +26,39 @@ public class MembersServiceImpl implements IMembersService {
         this.channelRepository = channelRepository;
     }
 
-    @Override
-    public MembersDto addMember(MembersDto membersDto) {
-        String id = membersDto.getChannelId();
-        Optional<Channel> channelOpt = channelRepository.findByChannelId(id);
-        if (channelOpt.isPresent()) {
-            Members members = new Members();
-            Channel channel = channelOpt.get();
-            Members addedMember = MembersMapper.mapToMembers(new MembersDto(), members, channel);
-            Members savedMember = membersRepository.save(addedMember);
-            return MembersMapper.mapToMembersDto(savedMember, new MembersDto());
-        }else {
-
-            throw new RuntimeException("Channel not found for ID: " + id);
-      }
-    }
-
-    @Override
-    public MembersDto getMemberById(String memberId) {
-        Optional<Members> memberOpt = membersRepository.findByMemberId(memberId);
-        if (memberOpt.isPresent()) {
-            return MembersMapper.mapToMembersDto(memberOpt.get(), new MembersDto());
-        } else {
-            throw new RuntimeException("Member not found for ID: " + memberId);
-        }
-    }
-
-    @Override
-    public List<MembersDto> getAllMembersByChannel(String channelId) {
-        List<Members> members = membersRepository.findByChannel_ChannelId(channelId);
-        return members.stream()
-                .map(member -> MembersMapper.mapToMembersDto(member, new MembersDto()))
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public MembersDto addMember(MembersDto membersDto) {
+//        String id = membersDto.getChannelId();
+//        Optional<Channel> channelOpt = channelRepository.findByChannelId(id);
+//        if (channelOpt.isPresent()) {
+//            Members members = new Members();
+//            Channel channel = channelOpt.get();
+//            Members addedMember = MembersMapper.mapToMembers(new MembersDto(), members, channel);
+//            Members savedMember = membersRepository.save(addedMember);
+//            return MembersMapper.mapToMembersDto(savedMember, new MembersDto());
+//        }else {
+//
+//            throw new RuntimeException("Channel not found for ID: " + id);
+//      }
+//    }
+//
+//    @Override
+//    public MembersDto getMemberById(String memberId) {
+//        Optional<Members> memberOpt = membersRepository.findByMemberId(memberId);
+//        if (memberOpt.isPresent()) {
+//            return MembersMapper.mapToMembersDto(memberOpt.get(), new MembersDto());
+//        } else {
+//            throw new RuntimeException("Member not found for ID: " + memberId);
+//        }
+//    }
+//
+//    @Override
+//    public List<MembersDto> getAllMembersByChannel(String channelId) {
+//        List<Members> members = membersRepository.findByChannel_ChannelId(channelId);
+//        return members.stream()
+//                .map(member -> MembersMapper.mapToMembersDto(member, new MembersDto()))
+//                .collect(Collectors.toList());
+//    }
 
 //    @Override
 //    public MembersDto updateMember(String memberId, MembersDto membersDto) {
@@ -75,12 +75,12 @@ public class MembersServiceImpl implements IMembersService {
 //        }
 //    }
 
-    @Override
-    public void deleteMember(String id) {
-        if (membersRepository.existsById(id)) {
-            membersRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Member not found for ID: " + id);
-        }
-    }
+//    @Override
+//    public void deleteMember(String id) {
+//        if (membersRepository.existsById(id)) {
+//            membersRepository.deleteById(id);
+//        } else {
+//            throw new RuntimeException("Member not found for ID: " + id);
+//        }
+//    }
 }

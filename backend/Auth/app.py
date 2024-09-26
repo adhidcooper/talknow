@@ -4,6 +4,7 @@ from flask import Flask, g
 from flask.sessions import SecureCookieSessionInterface
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 import model
 from route import auth_blueprint
@@ -11,6 +12,7 @@ from route import auth_blueprint
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app: Flask = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = 'wPk4epct1fRJuYwvMlEwGQ'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "database", "auth.db")}'

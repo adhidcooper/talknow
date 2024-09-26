@@ -31,43 +31,60 @@ def getAllUser():
 def create_user():
     try:
         user = Auth()
-        user.username = request.form['username']
-        user.email = request.form['email']
-        user.password = generate_password_hash(
-            request.form['password'], method='pbkdf2:sha256')
+        # print(user)
+        data = request.get_json()  # Get JSON data instead of form data
+        username = data.get("username")
+        email = data.get("email")
+        password = data.get("password")
+        print(username, email, password)
+        if not username or not email or not password:
+            status = 400
+            response = {
+                "message": 'Missing Fields',
+            }
+            return make_response(jsonify(response), status)
+        
+        user.username = username
+        user.email = email
+        user.password = generate_password_hash(password, method='scrypt')
         user.is_auth = True
         user.created_date = datetime.now()
+        
+        
         db.session.add(user)
         db.session.commit()
+        
         response = {
             "message": 'User Created!',
             "result": user.serialize()
         }
         status = 200
+        
     except Exception as e:
         print(str(e))
         response = {
             "message": "Something went wrong!",
         }
-        status = 401
+        status = 500
     return make_response(jsonify(response), status)
 
 
 @auth_blueprint.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()  # Get JSON data instead of form data
-    username = data.get('username')
-    password = data.get('password')
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
 
     if not username or not password:
         response = {'message': 'Username or password missing'}
         return make_response(jsonify(response), 400)
 
     user = Auth.query.filter_by(username=username).first()
+    print(password, user.password)
     if not user:
         response = {'message': 'User not found!'}
         return make_response(jsonify(response), 401)
-
+    # print(check_password_hash(user.password.to, password))
     if check_password_hash(user.password, password):
         user.update_api_key()
         db.session.commit()

@@ -39,4 +39,4 @@ class Auth(db.Model, UserMixin):
         return response
 
     def update_api_key(self):
-        self.api_key = generate_password_hash(self.username + str(datetime.now()))
+        self.api_key = generate_password_hash(self.username + str(datetime.now()), method='scrypt', salt_length=4)
