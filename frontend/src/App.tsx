@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import SignUp from './pages/SignUp';
 import Channels from './pages/Channels';
+import Chat from './pages/Chat';
 
 
 const App:React.FC = () => {
@@ -20,6 +21,9 @@ const App:React.FC = () => {
 
           {/* Dashboard route (Protected Route) */}
           <Route path='/dashboard' element={<Dashboard />} />
+
+          {/* Dashboard route (Protected Route) */}
+          <Route path='/chat:channelId' element={<Chat />} />
 
           {/* Channels Route */}
           <Route path='/channels' element={<Channels />} />

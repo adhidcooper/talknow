@@ -10,6 +10,15 @@ export const createChannel = async (channelName: string, check: boolean, api_key
    return response.data;
 }
 
+export const fetchUserChannels = async (api_key: string) => {
+   const response = await axios.get(`${MESSAGE_SERVICE_URL}/${MESSAGE_DIR}/user-channels`, {
+      headers: {
+         "Authorization" : api_key
+       }
+   })
+   return response.data
+}
+
 export const fetchAllChannels = async (api_key: string) => {
    const response = await axios.get(`${MESSAGE_SERVICE_URL}/${MESSAGE_DIR}/all`, {
       headers: {

@@ -15,7 +15,7 @@ public interface IChannelService {
 
     ChannelDto getChannelByName(String channelName);
 
-    List<MembersDto> getChannelsUserIn(String api_key);
+    List<ChannelDto> getChannelsUserIn(String api_key);
 
     List<ChannelDto> getAllChannels();
 

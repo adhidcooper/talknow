@@ -55,6 +55,12 @@ public class ChannelController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(ContentConstants.getChannelMsg,ContentConstants.statusCode200, channelDto));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173/")
+    @GetMapping("/user-channels")
+    public List<ChannelDto> getUserChannels(@RequestHeader("Authorization") String api_key) {
+        return channelService.getChannelsUserIn(api_key);
+    }
+
     // Get all channels
     @CrossOrigin(origins = "http://localhost:5173/")
     @GetMapping(value = "/all")

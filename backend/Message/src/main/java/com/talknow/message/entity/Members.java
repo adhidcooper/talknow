@@ -23,4 +23,9 @@ public class Members {
     @JoinColumn(name = "channel_id", nullable = false)
     @ToString.Exclude
     private Channel channel;
+
+    // Additional getter to retrieve channelId from the Channel object
+    public String getChannelId() {
+        return channel != null ? channel.getChannelId() : null; // Assuming getId() is the method in Channel to get the ID
+    }
 }

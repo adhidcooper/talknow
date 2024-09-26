@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -78,16 +79,29 @@ public class ChannelServiceImpl implements IChannelService {
     }
 
     @Override
-    public List<MembersDto> getChannelsUserIn(String api_key) {
+    public List<ChannelDto> getChannelsUserIn(String api_key) {
         UserDto currentUser = authUserService.getCurrentUser(api_key);
         Map<String, String> userResult = (Map<String, String>) currentUser.getResult();
         String userId = userResult.get("id");
-        List<Members> findMyChannels = membersRepository.findByUserId(userId);
-        return findMyChannels.stream()
-                .map(members -> MembersMapper.mapToMembersDto(members, new MembersDto()))
-                .collect(Collectors.toList());
 
+        // Fetch all members where userId matches
+        List<Members> userMemberships = membersRepository.findByUserId(userId);
+
+        // Extract the channel IDs from the memberships
+        List<String> channelIds = userMemberships.stream()
+                .map(Members::getChannelId) // Use the new getChannelId method
+                .filter(Objects::nonNull) // Filter out any null channel IDs
+                .collect(Collectors.toList());
+        log.info(channelIds.toString());
+        // Fetch all channels where the channelId matches those in the channelIds list
+        List<Channel> channels = channelRepository.findByChannelIdIn(channelIds);
+        log.info(channels.toString());
+        // Convert the channels to ChannelDto and return them
+        return channels.stream()
+                .map(channel -> ChannelsMapper.mapToChannelDto(channel, new ChannelDto()))
+                .collect(Collectors.toList());
     }
+
 
 
 

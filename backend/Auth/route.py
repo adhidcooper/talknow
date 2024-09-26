@@ -80,7 +80,7 @@ def login():
         return make_response(jsonify(response), 400)
 
     user = Auth.query.filter_by(username=username).first()
-    print(password, user.password)
+    # print(password, user.password)
     if not user:
         response = {'message': 'User not found!'}
         return make_response(jsonify(response), 401)
