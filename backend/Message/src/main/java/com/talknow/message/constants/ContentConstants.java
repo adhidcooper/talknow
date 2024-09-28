@@ -12,6 +12,8 @@ public class ContentConstants {
     public static final String deletedChannelMsg = "Successfully Deleted Channel!";
     public static final String messageSendMsg = "Message Sent Successfully!";
     public static final String getAllMembersMeg = "Fetched Members from all from Channel";
+    public static final String joinChannelMessage = "User Joined Channel";
+    public static final String gotAllMessagesFromChannel = "Fetched All Messages from the Channel!";
 
     public static final String statusCode201 = "201";
     public static final String statusCode401 = "401";

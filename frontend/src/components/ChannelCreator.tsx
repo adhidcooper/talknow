@@ -1,18 +1,14 @@
 import React, { useState, FormEvent } from 'react';
 import Checkbox from './Checkbox';
-import { createChannel } from '../app/authService/messageAPI';
+import { createChannel } from '../app/authService/channelAPI';
 import { RootState } from '../app/store';
 import { useSelector } from 'react-redux';
 
-interface ChannelCreatorProps {
-  onChannelCreated: (newChannel: { channelId: string; channelName: string; createdBy: string; createdTime: string; }) => void; // Add createdBy and createdTime
-}
 
-const ChannelCreator: React.FC<ChannelCreatorProps> = ({ onChannelCreated }) => {
+const ChannelCreator: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [check, setCheck] = useState<boolean>(false);
   const [channelName, setChannelName] = useState<string>("");
-
   const apiKey = useSelector((state: RootState) => state.auth.api_key);
 
   const handleToggle = () => {
@@ -24,19 +20,9 @@ const ChannelCreator: React.FC<ChannelCreatorProps> = ({ onChannelCreated }) => 
     
     try {
       const responseAction = await createChannel(channelName, check, apiKey!);
-      setMessage("Channel Created Successfully");
+      setMessage("Channel Created Successfully" + " " + channelName);
+      console.log(responseAction.data)
 
-      // Assuming responseAction contains the channelId and other info
-      if (responseAction) {
-        const newChannel = {
-          channelId: responseAction.channelId, // Adjust based on your API response structure
-          channelName: channelName,
-          createdBy: 'User', // Replace with actual user data if available
-          createdTime: new Date().toISOString(),
-        };
-        
-        onChannelCreated(newChannel); // Notify the parent about the new channel
-      }
     } catch (error) {
       setMessage("Failed to create channel");
       console.error(error);

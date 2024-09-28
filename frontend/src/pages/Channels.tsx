@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ChannelCreator from '../components/ChannelCreator';
-import { fetchUserChannels } from '../app/authService/messageAPI';
+import { fetchUserChannels } from '../app/authService/channelAPI';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { useNavigate } from 'react-router-dom';
+import FindChannels from '../components/FindChannels';
 
 interface ChannelsProps {
   channelId: string;
@@ -42,13 +43,12 @@ const Channels: React.FC = () => {
     navigate(`/chat/${channelId}`); // Navigate to chat page with channel ID
   };
 
-  const addChannel = (newChannel: ChannelsProps) => {
-    setChannels((prevChannels) => [...prevChannels, newChannel]);
-  };
 
   return (
     <div>
-      <ChannelCreator onChannelCreated={addChannel} />
+      <div>
+        <ChannelCreator />
+      </div>
       <br />
       <hr />
       <br />
@@ -70,6 +70,14 @@ const Channels: React.FC = () => {
         ) : (
           <p>No channels available.</p>
         )}
+      </div>
+        <br />
+        <hr />
+        <br />
+      <div>
+        <h2>Find Channels!</h2>
+        <FindChannels />
+
       </div>
     </div>
   );

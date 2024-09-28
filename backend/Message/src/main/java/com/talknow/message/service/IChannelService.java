@@ -22,4 +22,6 @@ public interface IChannelService {
     ChannelDto updateChannel(String id, ChannelDto channelDto, String api_key);
 
     ChannelDto deleteChannel(String id);
+
+    MembersDto joinChannel(String channelId, String api_key);
 }

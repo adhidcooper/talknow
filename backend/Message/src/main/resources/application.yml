@@ -12,7 +12,7 @@ spring:
   application:
     name: message
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:./src/main/resources/messagedb
     driverClassName: org.h2.Driver
     username: sa
     password: ''

@@ -1,8 +1,11 @@
 package com.talknow.message.mapper;
 
 import com.talknow.message.dto.ContentDto;
+import com.talknow.message.dto.ContentRequestDto;
 import com.talknow.message.entity.Channel;
 import com.talknow.message.entity.Content;
+
+import java.time.LocalDateTime;
 
 public class ContentMapper {
     public static ContentDto mapToContentDto(Content content, ContentDto contentDto) {
@@ -15,15 +18,15 @@ public class ContentMapper {
         return contentDto;
     }
 
-    public static Content mapToContent(ContentDto contentDto, Content content) {
-        if (content == null|| contentDto == null ) {
+    public static Content mapToContent(ContentRequestDto contentRequestDto, Content content, String userId, String username) {
+        if (content == null|| contentRequestDto == null ) {
             return null;
         }
-        content.setContentId(contentDto.getChannelId());
-        content.setMessage(contentDto.getMessage());
-        content.setCreatedBy(contentDto.getCreatedBy());
-        content.setUserId(contentDto.getUserId());
-        content.setCreatedTime(contentDto.getCreatedTime());
+        content.setContentId(contentRequestDto.getChannelId());
+        content.setMessage(contentRequestDto.getMessage());
+        content.setCreatedBy(username);
+        content.setUserId(userId);
+        content.setCreatedTime(LocalDateTime.now());
         return content;
     }
 }

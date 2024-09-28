@@ -147,4 +147,22 @@ public class ChannelServiceImpl implements IChannelService {
         }
 
     }
+
+    @Override
+    public MembersDto joinChannel(String channelId, String api_key) {
+        UserDto currentUser = authUserService.getCurrentUser(api_key);
+        Map<String, String> userResult = (Map<String, String>) currentUser.getResult();
+        String username = userResult.get("username");
+        String userId = userResult.get("id");
+
+        Optional<Channel> channelOpt = channelRepository.findByChannelId(channelId);
+        if (channelOpt.isPresent()) {
+            Members newMembers = new Members();
+            Members membersMapped = MembersMapper.mapToMembers(newMembers, channelOpt.get(), userId);
+            Members savedMembers = membersRepository.save(membersMapped);
+            return MembersMapper.mapToMembersDto(savedMembers, new MembersDto());
+        } else {
+            throw new ChannelNotFoundException("Channel is not Found in Id: " + channelId);
+        }
+    }
 }

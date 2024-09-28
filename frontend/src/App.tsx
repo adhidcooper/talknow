@@ -5,6 +5,7 @@ import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-d
 import SignUp from './pages/SignUp';
 import Channels from './pages/Channels';
 import Chat from './pages/Chat';
+import Unknown from './pages/Unknown';
 
 
 const App:React.FC = () => {
@@ -13,6 +14,8 @@ const App:React.FC = () => {
     
       <Router>
         <Routes>
+          <Route path='/unknown'element={<Unknown/>}/>
+
           {/* Route for login */}
           <Route path='/login' element={<Login />} />
 
@@ -23,13 +26,13 @@ const App:React.FC = () => {
           <Route path='/dashboard' element={<Dashboard />} />
 
           {/* Dashboard route (Protected Route) */}
-          <Route path='/chat:channelId' element={<Chat />} />
+          <Route path='/chat/:channelId' element={<Chat />} />
 
           {/* Channels Route */}
           <Route path='/channels' element={<Channels />} />
 
           {/* Redirect to login if unknown route */}
-          <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="*" element={<Navigate to="/unknown" />} />
         </Routes>
       </Router>
   )
