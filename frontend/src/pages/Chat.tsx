@@ -18,6 +18,7 @@ interface Message {
   message: string;
   createdTime: string;
   sender: string;
+  createdBy: string;
 }
 
 const Chat: React.FC = () => {
@@ -74,8 +75,8 @@ const Chat: React.FC = () => {
     try {
       const response = await createMessage(channelId, text, apiKey);
       if (response) {
-        setMessages([...messages, response.data]); // Append the new message to the existing ones
-        setText(''); // Clear input after sending
+        setMessages([...messages, response.data]);
+        setText('');
       } else {
         setError('Failed to send message');
       }
@@ -89,16 +90,14 @@ const Chat: React.FC = () => {
       <h6>Chat Channel: {channelDetails ? channelDetails?.channelName : 'Not Found!'}</h6>
       {error && <p>{error}</p>}
 
-      {/* Messages display */}
       <div>
         {messages.map((msg) => (
           <div key={msg.messageId}>
-            <strong>{msg.sender}:</strong> {msg.message} <em>{msg.createdTime}</em>
+            <strong>{msg.sender}:</strong> {msg.message} <em>{msg.createdBy}</em>
           </div>
         ))}
       </div>
 
-      {/* Input and send button */}
       <input
         type="text"
         value={text}

@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ContentRepository extends JpaRepository<Content, String> {
     List<Content> findByChannel_ChannelId(String channelId);
+
 }

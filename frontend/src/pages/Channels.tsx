@@ -26,6 +26,7 @@ const Channels: React.FC = () => {
         try {
           const responseAction = await fetchUserChannels(apiKey);
           // Ensure responseAction.data is always an array
+          console.log(responseAction)
           setChannels(Array.isArray(responseAction) ? responseAction : []);
           setError(null); // Reset error on successful fetch
         } catch (error) {

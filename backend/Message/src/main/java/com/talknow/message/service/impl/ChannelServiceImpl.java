@@ -80,27 +80,41 @@ public class ChannelServiceImpl implements IChannelService {
 
     @Override
     public List<ChannelDto> getChannelsUserIn(String api_key) {
-        UserDto currentUser = authUserService.getCurrentUser(api_key);
-        Map<String, String> userResult = (Map<String, String>) currentUser.getResult();
-        String userId = userResult.get("id");
+        try {
+            // Get current user details
+            UserDto currentUser = authUserService.getCurrentUser(api_key);
+            Map<String, String> userResult = (Map<String, String>) currentUser.getResult();
+            String userId = userResult.get("id");
 
-        // Fetch all members where userId matches
-        List<Members> userMemberships = membersRepository.findByUserId(userId);
+            log.info("Fetching memberships for userId: " + userId);
 
-        // Extract the channel IDs from the memberships
-        List<String> channelIds = userMemberships.stream()
-                .map(Members::getChannelId) // Use the new getChannelId method
-                .filter(Objects::nonNull) // Filter out any null channel IDs
-                .collect(Collectors.toList());
-        log.info(channelIds.toString());
-        // Fetch all channels where the channelId matches those in the channelIds list
-        List<Channel> channels = channelRepository.findByChannelIdIn(channelIds);
-        log.info(channels.toString());
-        // Convert the channels to ChannelDto and return them
-        return channels.stream()
-                .map(channel -> ChannelsMapper.mapToChannelDto(channel, new ChannelDto()))
-                .collect(Collectors.toList());
+            // Fetch memberships
+            List<Members> userMemberships = membersRepository.findByUserId(userId);
+
+            // Extract the channel IDs from memberships
+            List<String> channelIds = userMemberships.stream()
+                    .map(Members::getChannelId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            log.info("Fetched channelIds: " + channelIds);
+
+            // Fetch channels by ID
+            List<Channel> channels = channelRepository.findByChannelIdIn(channelIds);
+
+            log.info("Fetched channels: " + channels);
+
+            // Convert to DTOs
+            return channels.stream()
+                    .map(channel -> ChannelsMapper.mapToChannelDto(channel, new ChannelDto()))
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.error("Error fetching channels for user", e);
+            throw new RuntimeException("Failed to fetch channels");
+        }
     }
+
 
 
 

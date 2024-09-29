@@ -3,8 +3,10 @@ package com.talknow.message.service.impl;
 import com.talknow.message.dto.ContentDto;
 import com.talknow.message.dto.ContentRequestDto;
 import com.talknow.message.dto.UserDto;
+import com.talknow.message.entity.Channel;
 import com.talknow.message.entity.Content;
 import com.talknow.message.mapper.ContentMapper;
+import com.talknow.message.repository.ChannelRepository;
 import com.talknow.message.repository.ContentRepository;
 import com.talknow.message.service.IAuthUserService;
 import com.talknow.message.service.IContentService;
@@ -24,58 +26,30 @@ import java.util.stream.Collectors;
 public class ContentServiceImpl implements IContentService {
     private final ContentRepository contentRepository;
     private final IAuthUserService authUserService;
-
+    private final ChannelRepository channelRepository;
 
     @Override
-    public ContentDto createMessage(ContentRequestDto contentRequestDTo, String api_key) {
+    public ContentDto createMessage(ContentRequestDto contentRequestDto, String api_key) {
+        // Get current user details
         UserDto currentUser = authUserService.getCurrentUser(api_key);
         Map<String, String> userResult = (Map<String, String>) currentUser.getResult();
         String userId = userResult.get("id");
         String username = userResult.get("username");
-        Content content = ContentMapper.mapToContent(contentRequestDTo, new Content(), userId, username);
+
+        // Fetch the Channel entity based on the channel ID in the request DTO
+        Channel channel = channelRepository.findByChannelId(contentRequestDto.getChannelId())
+                .orElseThrow(() -> new RuntimeException("Channel not found"));
+
+        // Map the DTO to Content entity and set the channel
+        Content content = ContentMapper.mapToContent(contentRequestDto, new Content(), userId, username);
+        content.setChannel(channel);  // Set the channel
+
+        // Save the content
         Content savedContent = contentRepository.save(content);
+
+        // Return the mapped DTO
         return ContentMapper.mapToContentDto(savedContent, new ContentDto());
     }
-
-//    @Override
-//    public ContentDto getContentById(String id) {
-//        Optional<Content> contentOpt = contentRepository.findById(id);
-//        if (contentOpt.isPresent()) {
-//            return ContentMapper.mapToContentDto(contentOpt.get(), new ContentDto());
-//        } else {
-//            throw new RuntimeException("Content not found for ID: " + id);
-//        }
-//    }
-//
-//    @Override
-//    public List<ContentDto> getAllContents() {
-//        List<Content> contents = contentRepository.findAll();
-//        return contents.stream()
-//                .map(content -> ContentMapper.mapToContentDto(content, new ContentDto()))
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public ContentDto updateContent(String id, ContentDto contentDto) {
-//        Optional<Content> contentOpt = contentRepository.findById(id);
-//        if (contentOpt.isPresent()) {
-//            Content existingContent = contentOpt.get();
-//            ContentMapper.mapToContent(contentDto, existingContent);
-//            Content updatedContent = contentRepository.save(existingContent);
-//            return ContentMapper.mapToContentDto(updatedContent, new ContentDto());
-//        } else {
-//            throw new RuntimeException("Content not found for ID: " + id);
-//        }
-//    }
-//
-//    @Override
-//    public void deleteContent(String id) {
-//        if (contentRepository.existsById(id)) {
-//            contentRepository.deleteById(id);
-//        } else {
-//            throw new RuntimeException("Content not found for ID: " + id);
-//        }
-//    }
 
     @Override
     public List<ContentDto> getMessageByChannelId(String channelId) {
