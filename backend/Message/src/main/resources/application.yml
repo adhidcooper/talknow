@@ -3,7 +3,7 @@ server:
   port: 5002
 
 authService:
-  url: 127.0.0.1
+  url: 0.0.0.0
   port: 5001
   getUser: api/user/
 

@@ -14,10 +14,12 @@ public class ContentConstants {
     public static final String getAllMembersMeg = "Fetched Members from all from Channel";
     public static final String joinChannelMessage = "User Joined Channel";
     public static final String gotAllMessagesFromChannel = "Fetched All Messages from the Channel!";
+    public static final String errorGettingMessage = "Error fetching Message!";
 
     public static final String statusCode201 = "201";
     public static final String statusCode401 = "401";
     public static final String statusCode200 = "200";
     public static final String statusCode204 = "204"; // No content
+    public static final String statusCode500 = "500";
 
 }

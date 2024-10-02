@@ -41,7 +41,7 @@ public class ContentServiceImpl implements IContentService {
                 .orElseThrow(() -> new RuntimeException("Channel not found"));
 
         // Map the DTO to Content entity and set the channel
-        Content content = ContentMapper.mapToContent(contentRequestDto, new Content(), userId, username);
+        Content content = ContentMapper.mapToContent(contentRequestDto, new Content(), channel, userId, username);
         content.setChannel(channel);  // Set the channel
 
         // Save the content

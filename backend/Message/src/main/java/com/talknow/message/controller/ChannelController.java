@@ -31,7 +31,7 @@ public class ChannelController {
 
 
     // Create a new channel
-    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "http://0.0.0.0:5000")
     @PostMapping(value = "/create")
     public ResponseEntity<ResponseDto> createChannel (@RequestBody ChannelDto channelDto,@RequestHeader("Authorization") String api_key) {
         ChannelDto createdChannel = channelService.createChannel(channelDto, api_key);
@@ -42,28 +42,28 @@ public class ChannelController {
     }
 
     // Get a channel by ID
-    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "http://0.0.0.0:5000")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto> getChannelById (@PathVariable String id) {
         ChannelDto channelDto = channelService.getChannelById(id);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(ContentConstants.getChannelMsg,ContentConstants.statusCode200, channelDto));
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "http://0.0.0.0:5000")
     @GetMapping("/get+{channelName}")
     public ResponseEntity<ResponseDto> getChannelByName(@PathVariable String channelName) {
         ChannelDto channelDto = channelService.getChannelByName(channelName);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(ContentConstants.getChannelMsg,ContentConstants.statusCode200, channelDto));
     }
 
-    @CrossOrigin(origins = "http://localhost:5173/")
+    @CrossOrigin(origins = "http://0.0.0.0:5000/")
     @GetMapping("/user-channels")
     public List<ChannelDto> getUserChannels(@RequestHeader("Authorization") String api_key) {
         return channelService.getChannelsUserIn(api_key);
     }
 
     // Get all channels
-    @CrossOrigin(origins = "http://localhost:5173/")
+    @CrossOrigin(origins = "http://0.0.0.0:5000/")
     @GetMapping(value = "/all")
     public ResponseEntity<ResponseDto> getAllChannels() {
         List<ChannelDto> channels = channelService.getAllChannels();
@@ -71,7 +71,7 @@ public class ChannelController {
     }
 
     // Update a channel by ID
-    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "http://0.0.0.0:5000")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDto> updateChannel(@PathVariable String id, @RequestBody ChannelDto channelDto, @RequestHeader("Authorization") String api_key) {
         ChannelDto updatedChannel = channelService.updateChannel(id, channelDto, api_key);
@@ -87,7 +87,7 @@ public class ChannelController {
                 .body(new ResponseDto(ContentConstants.deletedChannelMsg, ContentConstants.statusCode200, channelItem.getChannelName()));
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "http://0.0.0.0:5000")
     @PostMapping("join/{id}")
     public ResponseEntity<ResponseDto> joinChannel (@PathVariable String id, @RequestHeader("Authorization") String api_key) {
         MembersDto joinChannel = channelService.joinChannel(id, api_key);

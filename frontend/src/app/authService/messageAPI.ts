@@ -12,7 +12,7 @@ export const createMessage = async (channelId?: string, message?: string, api_ke
     return response.data;
 }
 
-export const fetchMessagesByChannelId = async (channelId: string, api_key: string) => {
+export const fetchMessagesByChannelId = async (channelId?: string, api_key?: string) => {
     const response = await axios.get(`${MESSAGE_SERVICE_URL}/${MESSAGE_DIR}/channel/${channelId}`, {
       headers: {
         Authorization: api_key,

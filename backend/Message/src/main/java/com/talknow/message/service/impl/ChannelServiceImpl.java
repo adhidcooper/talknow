@@ -24,10 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -101,6 +98,10 @@ public class ChannelServiceImpl implements IChannelService {
 
             // Fetch channels by ID
             List<Channel> channels = channelRepository.findByChannelIdIn(channelIds);
+            if (channels.isEmpty()) {
+                log.warn("No channels found for the given channelIds: " + channelIds);
+                return Collections.emptyList();  // Return an empty list to avoid null-related issues
+            }
 
             log.info("Fetched channels: " + channels);
 

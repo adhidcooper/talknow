@@ -18,11 +18,12 @@ public class ContentMapper {
         return contentDto;
     }
 
-    public static Content mapToContent(ContentRequestDto contentRequestDto, Content content, String userId, String username) {
+    public static Content mapToContent(ContentRequestDto contentRequestDto, Content content, Channel channel,String userId, String username) {
         if (content == null|| contentRequestDto == null ) {
             return null;
         }
-        content.setContentId(contentRequestDto.getChannelId());
+//        content.setContentId(contentRequestDto.getChannelId());
+        content.setChannel(channel);
         content.setMessage(contentRequestDto.getMessage());
         content.setCreatedBy(username);
         content.setUserId(userId);

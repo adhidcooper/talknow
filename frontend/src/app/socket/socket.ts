@@ -3,8 +3,8 @@ import { Stomp } from '@stomp/stompjs';
 
 let stompClient = null;
 
-function connect() {
-    const socket = new SockJS('http://localhost:8080/ws-message');
+export function connectSocket(handleNewMessage) {
+    const socket = new SockJS('http://localhost:5002/ws-message'); // Use http or ws depending on your server
     stompClient = Stomp.over(socket);
 
     stompClient.connect({}, (frame) => {
@@ -12,14 +12,15 @@ function connect() {
 
         // Subscribe to the /topic/messages endpoint to receive updates
         stompClient.subscribe('/topic/messages', (messageOutput) => {
-            showMessageOutput(JSON.parse(messageOutput.body));
+            handleNewMessage(JSON.parse(messageOutput.body)); // Call the handler passed from Chat component
         });
     });
-}
 
-function showMessageOutput(message) {
-    console.log("New message: ", message);
-    // Update your frontend UI with the new message
+    return {
+        disconnect: () => {
+            if (stompClient) {
+                stompClient.disconnect();
+            }
+        }
+    };
 }
-
-connect();

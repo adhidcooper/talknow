@@ -6,6 +6,8 @@ import SignUp from './pages/SignUp';
 import Channels from './pages/Channels';
 import Chat from './pages/Chat';
 import Unknown from './pages/Unknown';
+import ForgotPassword from './pages/ForgotPassword';
+// import './index.css'
 
 
 const App:React.FC = () => {
@@ -30,6 +32,9 @@ const App:React.FC = () => {
 
           {/* Channels Route */}
           <Route path='/channels' element={<Channels />} />
+
+          {/* Forgot Password */}
+          <Route path='/forgotPassword' element={<ForgotPassword />} />
 
           {/* Redirect to login if unknown route */}
           <Route path="*" element={<Navigate to="/unknown" />} />
