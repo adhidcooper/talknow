@@ -1,3 +1,5 @@
+# route.py (auth app)
+
 from flask import Blueprint, make_response, jsonify, request
 from model import Auth, db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -43,23 +45,22 @@ def create_user():
                 "message": 'Missing Fields',
             }
             return make_response(jsonify(response), status)
-        
+
         user.username = username
         user.email = email
         user.password = generate_password_hash(password, method='scrypt')
         user.is_auth = True
         user.created_date = datetime.now()
-        
-        
+
         db.session.add(user)
         db.session.commit()
-        
+
         response = {
             "message": 'User Created!',
             "result": user.serialize()
         }
         status = 200
-        
+
     except Exception as e:
         print(str(e))
         response = {
