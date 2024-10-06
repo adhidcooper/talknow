@@ -1,10 +1,12 @@
 # route.py (auth app)
 
-from flask import Blueprint, make_response, jsonify, request
+from flask import Blueprint, make_response, jsonify, request, url_for
 from model import Auth, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, logout_user
 from datetime import datetime
+from flask_mail import Message
+from itsdangerous import URLSafeTimedSerializer
 
 auth_blueprint = Blueprint('auth_api_routes', __name__, url_prefix='/api/user')
 
@@ -144,3 +146,31 @@ def get_current_user():
         return make_response(jsonify({'result': current_user.serialize()}), 200)
     else:
         return make_response(jsonify({'message': "User not logged in"}), 401)
+
+
+@auth_blueprint.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get("email")
+
+    user = Auth.query.filter_by(email=email).first()
+    if not user:
+        return make_response(jsonify({"message": "User not found!"}), 404)
+
+    return make_response(jsonify({"message": "User verified!"}), 200)
+
+
+@auth_blueprint.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.get_json()
+    email = data.get("email")
+    new_password = data.get("new_password")
+
+    user = Auth.query.filter_by(email=email).first()
+    if not user:
+        return make_response(jsonify({"message": "User not found!"}), 404)
+
+    user.password = generate_password_hash(new_password, method='scrypt')
+    db.session.commit()
+
+    return make_response(jsonify({"message": "Password reset successful!"}), 200)

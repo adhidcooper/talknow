@@ -59,7 +59,7 @@ const Login: React.FC = () => {
 
         <div className="mt-4 text-center">
           <button
-            onClick={() => navigate("/forgot-password")}
+            onClick={() => navigate("/forgotPassword")}
             className="text-sm text-lime-400 hover:underline"
           >
             Forgot Password?

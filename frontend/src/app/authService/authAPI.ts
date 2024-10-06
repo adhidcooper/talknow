@@ -27,3 +27,13 @@ export const fetchUserInfo = async (apiKey: string) => {
     } });
     return response.data;
 };
+
+export const forgotPassword = async (email: string) => {
+   const response = await axios.post(`${AUTH_SERVICE_URL}/${AUTH_DIR}/forgot-password`, { "email" : email})
+   return response
+}
+
+export const resetPassword = async (email: string, newPassword: string) => {
+    const response = await axios.post(`${AUTH_SERVICE_URL}/${AUTH_DIR}/reset-password`, { "email": email, "new_password": newPassword})
+    return response
+}

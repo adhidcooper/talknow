@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { useNavigate } from 'react-router-dom';
 import FindChannels from '../components/FindChannels';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 interface ChannelsProps {
   channelId: string;
@@ -47,6 +49,7 @@ const Channels: React.FC = () => {
 
   return (
     <div>
+      <Navbar />
       <div>
         <ChannelCreator />
       </div>
@@ -80,6 +83,7 @@ const Channels: React.FC = () => {
         <FindChannels />
 
       </div>
+      <Footer />
     </div>
   );
 }
