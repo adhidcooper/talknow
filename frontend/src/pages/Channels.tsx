@@ -18,7 +18,7 @@ interface ChannelsProps {
 
 const Channels: React.FC = () => {
   const [channels, setChannels] = useState<ChannelsProps[]>([]);
-  const [error, setError] = useState<string | null>(null); // State for error handling
+  const [error, setError] = useState<string | null>(null);
   const apiKey = useSelector((state: RootState) => state.auth.api_key);
   const navigate = useNavigate();
 
@@ -27,13 +27,11 @@ const Channels: React.FC = () => {
       if (apiKey) {
         try {
           const responseAction = await fetchUserChannels(apiKey);
-          // Ensure responseAction.data is always an array
-          console.log(responseAction)
           setChannels(Array.isArray(responseAction) ? responseAction : []);
-          setError(null); // Reset error on successful fetch
+          setError(null);
         } catch (error) {
-          console.error("Failed to fetch channels:", error);
-          setError("Failed to fetch channels. Please try again."); // Set error message
+          console.error('Failed to fetch channels:', error);
+          setError('Failed to fetch channels. Please try again.');
         }
       }
     };
@@ -41,51 +39,48 @@ const Channels: React.FC = () => {
     displayChannels();
   }, [apiKey]);
 
-  // Function to handle channel click
   const handleChannelClick = (channelId: string) => {
-    navigate(`/chat/${channelId}`); // Navigate to chat page with channel ID
+    navigate(`/chat/${channelId}`);
   };
 
-
   return (
-    <div>
+    <div className="bg-gray-100 min-h-screen">
       <Navbar />
-      <div>
-        <ChannelCreator />
-      </div>
-      <br />
-      <hr />
-      <br />
-      <div>
-        <h2>Available Channels!</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
-        {channels.length > 0 ? (
-          <pre>
-            {channels.map((item) => (
+      <div className="container mx-auto p-4 flex flex-col lg:flex-row lg:space-x-4">
+        {/* Channel Creator Section */}
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-4 lg:w-1/3">
+          <h2 className="text-xl font-bold mb-4">Create a Channel</h2>
+          <ChannelCreator />
+        </div>
+
+        {/* Find Channels Section */}
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-4 lg:w-1/3">
+          <h2 className="text-xl font-bold mb-4">Find Channels</h2>
+          <FindChannels />
+        </div>
+
+        {/* Available Channels Section */}
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-4 lg:w-1/3">
+          <h2 className="text-xl font-bold mb-4">Available Channels</h2>
+          {error && <p className="text-red-500">{error}</p>}
+          {channels.length > 0 ? (
+            channels.map((item) => (
               <p
                 key={item.channelId}
                 onClick={() => handleChannelClick(item.channelId)}
-                style={{ cursor: 'pointer' }}
+                className="text-blue-500 cursor-pointer hover:underline mb-2"
               >
                 {item.channelName}
               </p>
-            ))}
-          </pre>
-        ) : (
-          <p>No channels available.</p>
-        )}
-      </div>
-        <br />
-        <hr />
-        <br />
-      <div>
-        <h2>Find Channels!</h2>
-        <FindChannels />
-
+            ))
+          ) : (
+            <p className="text-gray-500">No channels available.</p>
+          )}
+        </div>
       </div>
       <Footer />
     </div>
   );
-}
+};
 
 export default Channels;

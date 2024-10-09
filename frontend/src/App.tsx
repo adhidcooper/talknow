@@ -39,7 +39,6 @@ const App:React.FC = () => {
 
           {/* Channels Route */}
           <Route path='/channels' element={<Channels />} />
-          <Route path='/channelCreator' element={<ChannelCreator />} />
 
           {/* Forgot Password */}
           <Route path='/forgotPassword' element={<ForgotPassword />} />
