@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "api/message", produces = {MediaType.APPLICATION_JSON_VALUE})
-@CrossOrigin(origins = "http://0.0.0.0:5000")
+@CrossOrigin(origins = "http://localhost:5000")
 @MessageMapping("/sendMessage/{channelId}")  // Client sends to /app/sendMessage/{channelId}
 @SendTo("/topic/channel/{channelId}")
 public class ContentController {

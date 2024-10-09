@@ -9,6 +9,7 @@ import Unknown from './pages/Unknown';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import HomePage from './pages/HomePage';
+import ChannelCreator from './components/ChannelCreator';
 // import './index.css'
 
 
@@ -38,6 +39,7 @@ const App:React.FC = () => {
 
           {/* Channels Route */}
           <Route path='/channels' element={<Channels />} />
+          <Route path='/channelCreator' element={<ChannelCreator />} />
 
           {/* Forgot Password */}
           <Route path='/forgotPassword' element={<ForgotPassword />} />
