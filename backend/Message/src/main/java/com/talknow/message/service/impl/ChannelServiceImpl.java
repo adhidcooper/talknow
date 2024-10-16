@@ -22,6 +22,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -80,6 +82,11 @@ public class ChannelServiceImpl implements IChannelService {
         try {
             // Get current user details
             UserDto currentUser = authUserService.getCurrentUser(api_key);
+            if (currentUser == null) {
+                log.error("No user found for the provided API key: " + api_key);
+                throw new RuntimeException("No user found");
+            }
+
             Map<String, String> userResult = (Map<String, String>) currentUser.getResult();
             String userId = userResult.get("id");
 
@@ -89,36 +96,36 @@ public class ChannelServiceImpl implements IChannelService {
             List<Members> userMemberships = membersRepository.findByUserId(userId);
 
             // Extract the channel IDs from memberships
-            List<String> channelIds = userMemberships.stream()
+            Set<String> channelIds = userMemberships.stream()
                     .map(Members::getChannelId)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
             log.info("Fetched channelIds: " + channelIds);
 
             // Fetch channels by ID
-            List<Channel> channels = channelRepository.findByChannelIdIn(channelIds);
-            if (channels.isEmpty()) {
-                log.warn("No channels found for the given channelIds: " + channelIds);
-                return Collections.emptyList();  // Return an empty list to avoid null-related issues
+            List<ChannelDto> channelDtoList = new ArrayList<>();
+            for (String channelId : channelIds) {
+                Optional<Channel> optionalChannel = channelRepository.findByChannelId(channelId);
+                if (optionalChannel.isPresent()) {
+                    Channel channel = optionalChannel.get();
+                    // Convert to DTO and add to the list
+                    ChannelDto channelDto = ChannelsMapper.mapToChannelDto(channel, new ChannelDto());
+                    channelDtoList.add(channelDto);
+                } else {
+                    log.warn("Channel with ID " + channelId + " not found");
+                }
             }
 
-            log.info("Fetched channels: " + channels);
 
-            // Convert to DTOs
-            return channels.stream()
-                    .map(channel -> ChannelsMapper.mapToChannelDto(channel, new ChannelDto()))
-                    .collect(Collectors.toList());
+            log.info("Successfully fetched and converted channels for user" + channelDtoList);
+
+            return channelDtoList;
 
         } catch (Exception e) {
             log.error("Error fetching channels for user", e);
             throw new RuntimeException("Failed to fetch channels");
         }
     }
-
-
-
-
 
 
     // Get all channels

@@ -23,12 +23,7 @@ const Navbar: React.FC = () => {
         <div className="text-white text-xl font-bold">
           <a href="/">TalkNow</a>  {/* Replace with your app name or logo */}
         </div>
-        <button 
-          onClick={handleCreateChannel} 
-          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-200"
-        >
-          Logout
-        </button>
+       
 
         {/* Logout Button */}
         <button 

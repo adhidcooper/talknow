@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @AllArgsConstructor
-
 public class AuthUserServiceImpl implements IAuthUserService {
     private RestTemplate restTemplate;
     @Override

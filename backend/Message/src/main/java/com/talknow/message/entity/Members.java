@@ -10,7 +10,7 @@ import lombok.ToString;
 import java.util.UUID;
 
 @Entity
-@Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class Members {
     @Id
     @Column(name = "member_id")

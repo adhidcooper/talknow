@@ -14,7 +14,7 @@ public class ChannelsMapper {
         }
         channelDto.setChannelId(channel.getChannelId());
         channelDto.setChannelName(channel.getChannelName());
-        channelDto.setCreatedTime(LocalDateTime.now());
+        channelDto.setCreatedTime(channel.getCreatedTime());
         channelDto.setCreatedBy(channel.getCreatedBy());
         channelDto.setChannelOpen(channel.getChannelOpen());
         return channelDto;
