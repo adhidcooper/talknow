@@ -1,0 +1,52 @@
+services:
+  # PostgreSQL Service
+  postgres:
+    image: postgres:13
+    container_name: database
+    environment:
+      POSTGRES_DB: messagedb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: adhi
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - talknownet
+    ports:
+      - "5432:5432"
+
+  # Message Service (Spring Boot app)
+  messageservice:
+    build:
+      context: ./backend/message # All paths should be lowercase
+    container_name: messageservice
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/messagedb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: adhi
+    depends_on:
+      - postgres
+      - authservice
+    networks:
+      - talknownet
+    ports:
+      - "5002:5002"
+
+  # Auth Service (Python Flask app using SQLite)
+  authservice:
+    build:
+      context: ./backend/auth # Ensure the folder name is lowercase
+    container_name: authservice
+    environment:
+      FLASK_ENV: development
+    networks:
+      - talknownet
+    ports:
+      - "5001:5001"
+
+volumes:
+  postgres_data:
+
+
+networks:
+  talknownet:
+    driver: bridge

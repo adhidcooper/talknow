@@ -1,75 +1,73 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RootState } from '../app/store';
 import { fetchUser } from '../app/authService/AuthSlice';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../app/hooks/hooks';
-import Navbar from '../components/Navbar';  // Navbar Component
-import Footer from '../components/Footer';  // Footer Component
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import ChannelList from '../components/ChannelList';
+import ChannelCreator from '../components/ChannelCreator';
+import FindChannels from '../components/FindChannels';
 
 const Dashboard: React.FC = () => {
-    const dispatch = useAppDispatch();
-    const navigate = useNavigate();
-
-    // Fetch user info from Redux store
-    const user = useSelector((state: RootState) => state.auth.result);
-    const apiKey = useSelector((state: RootState) => state.auth.api_key);
-    const loading = useSelector((state: RootState) => state.auth.loading);
-    const error = useSelector((state: RootState) => state.auth.error);
-
-    useEffect(() => {
-        if (apiKey) {
-            dispatch(fetchUser(apiKey));  // Fetch the user information if apiKey exists
-        } else {
-            navigate('/login');  // Redirect to login if not authenticated
-        }
-    }, [apiKey, dispatch, navigate]);
-
-    const onHandleNavigateChannelCreation = () => {
-        navigate('/channels');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const handleChannelClick = (channelId: string) => {
+    navigate(`/chat/${channelId}`);
+  };
+  
+  const user = useSelector((state: RootState) => state.auth.result);
+  const apiKey = useSelector((state: RootState) => state.auth.api_key);
+  const loading = useSelector((state: RootState) => state.auth.loading);
+  const fetchError = useSelector((state: RootState) => state.auth.error);
+  
+  useEffect(() => {
+    if (apiKey) {
+      dispatch(fetchUser(apiKey));
+    } else {
+      navigate('/login');
     }
+  }, [apiKey, dispatch, navigate]);
 
-    if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-    if (error) return <div className="flex justify-center items-center h-screen">Error: {error}</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen text-lg">Loading...</div>;
+  if (fetchError) return <div className="flex justify-center items-center h-screen text-lg text-red-500">Error: {fetchError}</div>;
 
-    return (
-        <div className="flex min-h-screen bg-gray-100">
-            {/* Sidebar */}
-            <aside className="w-64 bg-white shadow-md flex flex-col">
-                <div className="p-6 border-b">
-                    <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <Navbar />
+      <div className="container mx-auto p-6 lg:px-2">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <aside className="col-span-1 bg-white shadow rounded-lg p-6">
+            <div className="space-y-4">
+              {/* <div className="bg-gray-100 rounded-lg p-6 shadow-md"> */}
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">Create a Channel</h3>
+                <ChannelCreator />
+              {/* </div> */}
+              <hr />
+              {/* <div className="bg-gray-100 rounded-lg p-6 shadow-md"> */}
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">Find Channels</h3>
+                <FindChannels />
+              </div>
+            {/* </div> */}
+          </aside>
+
+          <main className="col-span-3">
+                  {/* <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome</h2> */}
+            {user && (
+                <div className="text-left mb-6">
+                <p className="text-2xl font-bold  text-gray-800">Hello, {user.username}!</p>
+                <p className="text-gray-500">{user.email}</p>
                 </div>
-                <nav className="flex-grow p-4">
-                    <ul>
-                        <li className="mb-4">
-                            <button
-                                onClick={onHandleNavigateChannelCreation}
-                                className="w-full text-left bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"
-                            >
-                                Create Channel
-                            </button>
-                        </li>
-                        {/* Add more navigation items as needed */}
-                    </ul>
-                </nav>
-            </aside>
-
-            {/* Main content */}
-            <main className="flex-grow flex flex-col items-center p-6">
-                <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl">
-                    <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Welcome Back!</h2>
-                    {user ? (
-                        <div className="text-center">
-                            <p className="text-xl font-semibold text-gray-700">Hello, {user.username}!</p>
-                            <p className="text-gray-500 mb-6">{user.email}</p>
-                        </div>
-                    ) : (
-                        <p className="text-gray-500 text-center">No user information available.</p>
-                    )}
-                </div>
-            </main>
+            )}
+           
+            <ChannelList onChannelSelect={(channelId) => handleChannelClick(channelId)}/>
+          </main>
         </div>
-    );
-}
+      </div>
+      <Footer />
+    </div>
+  );
+};
 
 export default Dashboard;

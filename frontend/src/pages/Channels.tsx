@@ -21,7 +21,7 @@ const Channels: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const apiKey = useSelector((state: RootState) => state.auth.api_key);
   const navigate = useNavigate();
-
+  console.log(apiKey)
   useEffect(() => {
     const displayChannels = async () => {
       if (apiKey) {

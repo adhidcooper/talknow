@@ -1,5 +1,6 @@
 package com.talknow.message.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Optional;

@@ -18,7 +18,5 @@ public interface ChannelRepository extends JpaRepository<Channel, String> {
     Optional<Channel> findByChannelId(String channelId);
     boolean existsByChannelId(String channelId);
     Optional<Channel> deleteByChannelId(String channelId);
-//    List<Channel> findByChannelIdIn(Set<String> channelIds);
-    @Query("SELECT c FROM Channel c WHERE c.channelId IN :channelIds")
-    List<Channel> findChannelsByIds(@Param("channelIds") Set<String> channelIds);
+
 }

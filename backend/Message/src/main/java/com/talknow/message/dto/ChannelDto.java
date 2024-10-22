@@ -4,7 +4,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Setter @Getter @AllArgsConstructor @NoArgsConstructor
+@Data
 public class ChannelDto {
     private String channelId;
     private String channelName;

@@ -1,26 +1,16 @@
-
 server:
   port: 5002
-
-authService:
-  url: 0.0.0.0
-  port: 5001
-  getUser: api/user/
-
 
 spring:
   application:
     name: message
   datasource:
-    url: jdbc:h2:file:./src/main/resources/messagedb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''
-  h2:
-    console:
-      enabled: true
+    url: jdbc:postgresql://localhost:5432/messagedb
+    username: postgres
+    password: adhi
+    driver-class-name: org.postgresql.Driver
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
     hibernate:
       ddl-auto: update
-    show-sql: true
