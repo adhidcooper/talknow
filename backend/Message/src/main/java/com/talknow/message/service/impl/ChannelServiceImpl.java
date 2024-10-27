@@ -2,7 +2,6 @@ package com.talknow.message.service.impl;
 
 import com.talknow.message.dto.ChannelDto;
 
-
 import com.talknow.message.dto.MembersDto;
 import com.talknow.message.dto.UserDto;
 import com.talknow.message.entity.Channel;
@@ -11,13 +10,13 @@ import com.talknow.message.entity.Members;
 import com.talknow.message.exception.ChannelNotFoundException;
 import com.talknow.message.mapper.ChannelsMapper;
 
-
 import com.talknow.message.mapper.MembersMapper;
 import com.talknow.message.repository.ChannelRepository;
 
 import com.talknow.message.repository.MembersRepository;
 import com.talknow.message.service.IAuthUserService;
 import com.talknow.message.service.IChannelService;
+import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,10 +61,10 @@ public class ChannelServiceImpl implements IChannelService {
     public ChannelDto getChannelById(String id) {
         Optional<Channel> channelOpt = channelRepository.findByChannelId(id);
         if (channelOpt.isPresent()) {
-            return ChannelsMapper.mapToChannelDto(channelOpt.get(), new ChannelDto());  // Map entity to DTO
+            return ChannelsMapper.mapToChannelDto(channelOpt.get(), new ChannelDto()); // Map entity to DTO
         } else {
             // Handle the case when the channel is not found
-            throw new ChannelNotFoundException("Channel is not Found!: "+ channelOpt.get().getChannelId().toString());
+            throw new ChannelNotFoundException("Channel is not Found!: " + channelOpt.get().getChannelId().toString());
         }
     }
 
@@ -71,12 +72,65 @@ public class ChannelServiceImpl implements IChannelService {
     public ChannelDto getChannelByName(String channelName) {
         Optional<Channel> channelOpt = channelRepository.findByChannelName(channelName);
         if (channelOpt.isPresent()) {
-            return ChannelsMapper.mapToChannelDto(channelOpt.get(), new ChannelDto());  // Map entity to DTO
+            return ChannelsMapper.mapToChannelDto(channelOpt.get(), new ChannelDto()); // Map entity to DTO
         } else {
             // Handle the case when the channel is not found
             throw new ChannelNotFoundException("Channel Name not found: " + channelName);
         }
     }
+
+    // @Override
+    // public List<ChannelDto> getChannelsUserIn(String api_key) {
+    // try {
+    // // Get current user details
+    // UserDto currentUser = authUserService.getCurrentUser(api_key);
+    // if (currentUser == null) {
+    // log.error("No user found for the provided API key: " + api_key);
+    // throw new RuntimeException("No user found");
+    // }
+
+    // Map<String, String> userResult = (Map<String, String>)
+    // currentUser.getResult();
+    // String userId = userResult.get("id");
+
+    // log.info("Fetching memberships for userId: " + userId);
+
+    // // Fetch memberships
+    // List<Members> userMemberships = membersRepository.findByUserId(userId);
+
+    // // Extract the channel IDs from memberships
+    // Set<String> channelIds = userMemberships.stream()
+    // .map(Members::getChannelId)
+    // .collect(Collectors.toSet());
+
+    // log.info("Fetched channelIds: " + channelIds);
+
+    // // Fetch channels by ID
+    // List<ChannelDto> channelDtoList = new ArrayList<>();
+    // for (String channelId : channelIds) {
+    // Optional<Channel> optionalChannel =
+    // channelRepository.findByChannelId(channelId);
+    // if (optionalChannel.isPresent()) {
+    // Channel channel = optionalChannel.get();
+    // // Convert to DTO and add to the list
+    // ChannelDto channelDto = ChannelsMapper.mapToChannelDto(channel, new
+    // ChannelDto());
+    // channelDtoList.add(channelDto);
+    // } else {
+    // log.warn("Channel with ID " + channelId + " not found");
+    // }
+    // }
+
+    // log.info("Successfully fetched and converted channels for user" +
+    // channelDtoList);
+
+    // return channelDtoList;
+
+    // } catch (Exception e) {
+    // log.error("Error fetching channels for user", e);
+    // throw new RuntimeException("Failed to fetch channels");
+    // }
+    // }
 
     @Override
     public List<ChannelDto> getChannelsUserIn(String api_key) {
@@ -91,36 +145,32 @@ public class ChannelServiceImpl implements IChannelService {
             Map<String, String> userResult = (Map<String, String>) currentUser.getResult();
             String userId = userResult.get("id");
 
-            log.info("Fetching memberships for userId: " + userId);
+            log.info("Fetching channels for userId: " + userId);
 
-            // Fetch memberships
-            List<Members> userMemberships = membersRepository.findByUserId(userId);
+            // Fetch data as a list of maps and manually map to ChannelDto
 
-            // Extract the channel IDs from memberships
-            Set<String> channelIds = userMemberships.stream()
-                    .map(Members::getChannelId)
-                    .collect(Collectors.toSet());
+            List<Tuple> result = channelRepository.findChannelsForUserByUserId(userId);
+            log.info("data: " + result);
 
-            log.info("Fetched channelIds: " + channelIds);
-
-            // Fetch channels by ID
-            List<ChannelDto> channelDtoList = new ArrayList<>();
-            for (String channelId : channelIds) {
-                Optional<Channel> optionalChannel = channelRepository.findByChannelId(channelId);
-                if (optionalChannel.isPresent()) {
-                    Channel channel = optionalChannel.get();
-                    // Convert to DTO and add to the list
-                    ChannelDto channelDto = ChannelsMapper.mapToChannelDto(channel, new ChannelDto());
-                    channelDtoList.add(channelDto);
-                } else {
-                    log.warn("Channel with ID " + channelId + " not found");
-                }
-            }
+            List<ChannelDto> channels = result.stream().map(tuple -> {
+                ChannelDto dto = new ChannelDto();
+                dto.setChannelId(tuple.get("channel_id", String.class));
+                dto.setChannelName(tuple.get("channel_name", String.class));
+                dto.setCreatedBy(tuple.get("created_by", String.class));
+                dto.setChannelOpen(tuple.get("channel_open", Boolean.class));
+//                dto.setCreatedTime(tuple.get("created_time", LocalDateTime.class));
+                // Convert Timestamp to LocalDateTime
+                Timestamp timestamp = tuple.get("created_time", Timestamp.class);
+                dto.setCreatedTime(timestamp.toLocalDateTime());
+                return dto;
+            }).collect(Collectors.toList());
 
 
-            log.info("Successfully fetched and converted channels for user" + channelDtoList);
 
-            return channelDtoList;
+
+            log.info("Successfully fetched channels for user with userId " + userId);
+
+            return channels;
 
         } catch (Exception e) {
             log.error("Error fetching channels for user", e);
@@ -128,17 +178,16 @@ public class ChannelServiceImpl implements IChannelService {
         }
     }
 
-
     // Get all channels
     @Override
     public List<ChannelDto> getAllChannels() {
         List<Channel> channels = channelRepository.findAll();
         return channels.stream()
                 .map(channel -> ChannelsMapper.mapToChannelDto(channel, new ChannelDto()))
-                .collect(Collectors.toList());  // Return the list of DTOs
+                .collect(Collectors.toList()); // Return the list of DTOs
     }
 
-//  Update a channel by ID
+    // Update a channel by ID
     @Override
     public ChannelDto updateChannel(String id, ChannelDto channelDto, String api_key) {
         UserDto currentUser = authUserService.getCurrentUser(api_key);
@@ -147,12 +196,14 @@ public class ChannelServiceImpl implements IChannelService {
         Optional<Channel> channelOpt = channelRepository.findByChannelId(id);
         if (channelOpt.isPresent()) {
             Channel existingChannel = channelOpt.get();
-            Channel updatedChannel = ChannelsMapper.mapToChannel(channelDto, existingChannel, username);  // Update entity with DTO data
-            Channel savedChannel = channelRepository.save(updatedChannel);  // Save updated entity
-            return ChannelsMapper.mapToChannelDto(savedChannel, new ChannelDto());  // Map back to DTO
+            Channel updatedChannel = ChannelsMapper.mapToChannel(channelDto, existingChannel, username); // Update
+                                                                                                         // entity with
+                                                                                                         // DTO data
+            Channel savedChannel = channelRepository.save(updatedChannel); // Save updated entity
+            return ChannelsMapper.mapToChannelDto(savedChannel, new ChannelDto()); // Map back to DTO
         } else {
             // Handle the case when the channel is not found
-            throw new ChannelNotFoundException("Channel is not Found!: "+ channelOpt.get().getChannelId().toString());
+            throw new ChannelNotFoundException("Channel is not Found!: " + channelOpt.get().getChannelId().toString());
         }
     }
 
@@ -166,7 +217,7 @@ public class ChannelServiceImpl implements IChannelService {
             return ChannelsMapper.mapToChannelDto(delChannel, new ChannelDto()); // Delete the entity
         } else {
             // Handle the case when the channel is not found
-            throw new ChannelNotFoundException("Channel is not Found!: "+ channelOpt.get().getChannelId());
+            throw new ChannelNotFoundException("Channel is not Found!: " + channelOpt.get().getChannelId());
         }
 
     }

@@ -51,7 +51,6 @@ def create_user():
         user.username = username
         user.email = email
         user.password = generate_password_hash(password, method='scrypt')
-        user.is_auth = True
         user.created_date = datetime.now()
 
         db.session.add(user)
@@ -90,9 +89,10 @@ def login():
     # print(check_password_hash(user.password.to, password))
     if check_password_hash(user.password, password):
         user.update_api_key()
+        user.is_active = True
+        user.authenticated = True
         db.session.commit()
         login_user(user)
-        user.authenticated = True
         response = {
             'message': f'{user.username} logged in',
             'api_key': user.api_key,
@@ -174,3 +174,19 @@ def reset_password():
     db.session.commit()
 
     return make_response(jsonify({"message": "Password reset successful!"}), 200)
+
+
+@auth_blueprint.route('/logout', methods=['POST'])
+def logout():
+    if current_user.is_authenticated:
+        user = Auth.query.get(current_user.id)
+        user.is_active = False
+        db.session.commit()
+        login_user()
+        return make_response(jsonify({"message": "user logged out"}), 200)
+    return make_response(jsonify({"message": "user not logged in"}), 200)
+
+
+@auth_blueprint.route('/edit-profile', methods=['POST'])
+def editProfile():
+    print('edit-profile')

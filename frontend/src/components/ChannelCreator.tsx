@@ -11,9 +11,7 @@ const ChannelCreator: React.FC = () => {
   const [channelName, setChannelName] = useState<string>('');
   const apiKey = useSelector((state: RootState) => state.auth.api_key);
   const navigate = useNavigate();
-  const handleChannelClick = (channelId: string) => {
-    navigate(`/chat/${channelId}`);
-  };
+
 
   const handleCreateChannel = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
