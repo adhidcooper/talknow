@@ -181,12 +181,75 @@ def logout():
     if current_user.is_authenticated:
         user = Auth.query.get(current_user.id)
         user.is_active = False
+        user.authenticated = False
         db.session.commit()
-        login_user()
-        return make_response(jsonify({"message": "user logged out"}), 200)
-    return make_response(jsonify({"message": "user not logged in"}), 200)
+        logout_user()  # Properly logs out the user from the session
+        return make_response(jsonify({"message": "User logged out"}), 200)
+    return make_response(jsonify({"message": "User not logged in"}), 401)
 
 
-@auth_blueprint.route('/edit-profile', methods=['POST'])
-def editProfile():
-    print('edit-profile')
+@auth_blueprint.route('/channel_activity', methods=['POST'])
+def isUserActive():
+    try:
+        data = request.get_json()
+        userIds = data.get("userIds")
+        print(userIds)
+
+        if not userIds:
+            status = 400
+            return make_response(jsonify({"message": "UserIds not provided"}), status)
+
+        status = 200
+        userList = Auth.query.filter(Auth.id.in_(userIds)).all()
+        result = [
+            {"id": user.id,
+             "username": user.firstName,
+             "firstName": user.lastName,
+             "lastName": user.firstName,
+             "is_active": user.is_active
+             } for user in userList
+        ]
+
+        response = {
+            "message": "Fetched userlist from channel Successfully!",
+            "result": result
+        }
+        return make_response(jsonify(response), status)
+
+    except Exception as e:
+        print(str(e))
+        response = {
+            "message": "Error Occurred while fetching user details!",
+            "result": f"{e}"
+        }
+        status = 500
+        return make_response(jsonify(response), status)
+
+
+@auth_blueprint.route('/edit-profile/<username>', methods=['POST'])
+def editProfile(username):
+    user = Auth.query.filter_by(username=username).first()
+    if user:
+        data = request.get_json()
+        firstName = data.get("firstName")
+        lastName = data.get("lastName")
+        phoneNumber = data.get("phoneNo")
+        userImg = data.get("imgUrl")
+        user.firstName = firstName
+        user.lastName = lastName
+        user.phoneNumber = phoneNumber
+        user.imageUrl = userImg
+        print(user)
+        db.session.commit()
+        status = 200
+        response = {
+            "message": "Profile updated successfully",
+            "results": user
+        }
+        return make_response(jsonify(response), status)
+    else:
+        response = {
+            "message": "Failed to Edit Profile!"
+        }
+        status = 401
+        return make_response(jsonify(response), status)
