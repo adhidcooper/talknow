@@ -1,6 +1,6 @@
 // src/features/auth/authAPI.ts
 import axios from 'axios';
-
+import { UserData } from '../../components/Navbar';
 
 const AUTH_SERVICE_URL = 'http://127.0.0.1:5001';
 const AUTH_DIR = 'api/user'
@@ -35,5 +35,11 @@ export const forgotPassword = async (email: string) => {
 
 export const resetPassword = async (email: string, newPassword: string) => {
     const response = await axios.post(`${AUTH_SERVICE_URL}/${AUTH_DIR}/reset-password`, { "email": email, "new_password": newPassword})
+    return response
+}
+
+export const editProfile = async (data: UserData, username: string) => {
+    const response = await axios.post(`${AUTH_SERVICE_URL}/${AUTH_DIR}/edit-profile/${username}`, { "firstName": data.firstName, "lastName": data.lastName, "phoneNo": data.phoneNo, "imgUrl": data.imgUrl})
+    console.log(response)
     return response
 }
