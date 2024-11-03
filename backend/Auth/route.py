@@ -235,21 +235,30 @@ def editProfile(username):
         lastName = data.get("lastName")
         phoneNumber = data.get("phoneNo")
         userImg = data.get("imgUrl")
+
+        # Update user fields
         user.firstName = firstName
         user.lastName = lastName
         user.phoneNumber = phoneNumber
         user.imageUrl = userImg
-        print(user)
+
+        # Commit changes to the database
         db.session.commit()
-        status = 200
+
+        # Serialize user data for response
         response = {
             "message": "Profile updated successfully",
-            "results": user
+            "results": {
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "phoneNo": user.phoneNumber,
+                "imgUrl": user.imageUrl,
+                "username": user.username  # add fields as needed
+            }
         }
-        return make_response(jsonify(response), status)
+        return make_response(jsonify(response), 200)
     else:
         response = {
-            "message": "Failed to Edit Profile!"
+            "message": "Failed to Edit Profile! User not found."
         }
-        status = 401
-        return make_response(jsonify(response), status)
+        return make_response(jsonify(response), 404)
