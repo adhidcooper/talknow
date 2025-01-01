@@ -3,6 +3,9 @@ import axios from "axios";
 const CHANNEL_SERVICE_URL = 'http://127.0.0.1:5002';
 const CHANNEL_DIR = 'api/channel';
 
+const AUTH_SERVICE_URL = 'http://127.0.0.1:5001';
+const AUTH_DIR = 'api/user'
+
 export const createChannel = async (channelName: string, check: boolean, api_key: string) => {
     try {
         const response = await axios.post(`${CHANNEL_SERVICE_URL}/${CHANNEL_DIR}/create`, 
@@ -82,3 +85,22 @@ export const joinChannel = async (channelId?: string, api_key?: string | null) =
         throw error;
     }
 };
+
+export const channelActivity = async (channelId: string, api_key: string) => {
+    try {
+
+        const channelResponse = await axios.get(`${CHANNEL_SERVICE_URL}/${CHANNEL_DIR}/channel_users/${channelId}`);
+        const userIds = channelResponse.data.data;
+
+        const authResponse = await axios.post(`${AUTH_SERVICE_URL}/${AUTH_DIR}/channel_activity`, 
+            { "userIds": userIds },
+            { headers: { Authorization: api_key } }
+        );
+
+        return authResponse.data;
+    } catch (error) {
+        console.error('Failed to retrieve channel activity:', error.response ? error.response.data : error.message);
+        throw error;
+    }
+
+}

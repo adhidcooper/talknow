@@ -20,14 +20,16 @@ const Channels: React.FC = () => {
   const [channels, setChannels] = useState<ChannelsProps[]>([]);
   const [error, setError] = useState<string | null>(null);
   const apiKey = useSelector((state: RootState) => state.auth.api_key);
+  localStorage.setItem("userDetails", apiKey || "");
   const navigate = useNavigate();
-  console.log(apiKey)
+  console.log("test" ,channels)
   useEffect(() => {
     const displayChannels = async () => {
       if (apiKey) {
         try {
           const responseAction = await fetchUserChannels(apiKey);
           setChannels(Array.isArray(responseAction) ? responseAction : []);
+          console.log("channels", channels)
           setError(null);
         } catch (error) {
           console.error('Failed to fetch channels:', error);
@@ -40,7 +42,13 @@ const Channels: React.FC = () => {
   }, [apiKey]);
 
   const handleChannelClick = (channelId: string) => {
-    navigate(`/chat/${channelId}`);
+    if (!channelId) {
+      console.error("Invalid channelId");
+      return;
+  }
+  console.log("Channel clicked:", channelId);
+  navigate(`/chat/${channelId}`);
+  localStorage.setItem("currentChannel", channelId);
   };
 
   return (

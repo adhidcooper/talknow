@@ -8,6 +8,7 @@ import com.talknow.message.entity.Members;
 import com.talknow.message.service.IChannelService;
 import com.talknow.message.service.IMembersService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "api/channel", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class ChannelController {
@@ -88,11 +90,27 @@ public class ChannelController {
     }
 
     @CrossOrigin(origins = "http://localhost:5000")
-    @PostMapping("join/{id}")
+    @PostMapping("/join/{id}")
     public ResponseEntity<ResponseDto> joinChannel (@PathVariable String id, @RequestHeader("Authorization") String api_key) {
         MembersDto joinChannel = channelService.joinChannel(id, api_key);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(ContentConstants.joinChannelMessage, ContentConstants.statusCode200, joinChannel));
     }
+
+    @CrossOrigin(origins = "http://localhost:5000")
+    @GetMapping("/channel_users/{channelId}")
+    public ResponseEntity<ResponseDto> getUserIdsFromChannelId(@PathVariable String channelId) {
+        try {
+            // Call the service method to fetch user data by channel ID
+            List<String> userData = channelService.getUserIdsFromChannel(channelId);
+            return ResponseEntity.ok(new ResponseDto("Fetched user data", ContentConstants.statusCode200, userData));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto("Error retrieving user data", ContentConstants.statusCode500, null));
+        }
+    }
+
+
+
 }

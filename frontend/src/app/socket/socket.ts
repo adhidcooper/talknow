@@ -1,16 +1,16 @@
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 
-export function connectSocket(handleNewMessage) {
+export function connectSocket(handleNewMessage, channelId) {
     let stompClient = null;
-    const socket = new SockJS('http://localhost:5002/ws-message');
+    const socket = ('http://localhost:5002/ws');
     stompClient = Stomp.client(socket);
 
     stompClient.connect({}, (frame) => {
         console.log('Connected: ' + frame);
         
         // Subscribe to the topic
-        stompClient.subscribe('/topic/messages', (messageOutput) => {
+        stompClient.subscribe(`/topic/channel/${channelId}`, (messageOutput) => {
             try {
                 const message = JSON.parse(messageOutput.body);
                 handleNewMessage(message);

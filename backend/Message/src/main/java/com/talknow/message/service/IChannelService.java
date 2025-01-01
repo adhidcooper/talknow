@@ -24,4 +24,6 @@ public interface IChannelService {
     ChannelDto deleteChannel(String id);
 
     MembersDto joinChannel(String channelId, String api_key);
+
+    List<String> getUserIdsFromChannel(String channelId);
 }

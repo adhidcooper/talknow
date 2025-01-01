@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAppDispatch } from '../app/hooks/hooks';
-import { useNavigate } from 'react-router-dom';
-import { logout } from '../app/authService/AuthSlice';
+import {  useNavigate } from 'react-router-dom';
+import { fetchUser, logout } from '../app/authService/AuthSlice';
 import { FiEdit, FiLogOut } from 'react-icons/fi';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { RootState } from '../app/store';
 import { useSelector } from 'react-redux';
 import { editProfile } from '../app/authService/authAPI';
+import { fetchUserInfo } from '../app/authService/authAPI';
 
 export type UserData = {
   firstName: string;
@@ -21,7 +22,13 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   const user = useSelector((state: RootState) => state.auth.result);
-  console.log(user)
+  // const loading = useSelector((state: RootState) => state.auth.loading);
+  console.log("usersss", user)
+  if (user) {
+    localStorage.setItem("userDetails", JSON.stringify(user));
+  } else {
+    console.error("User data is null or undefined");
+  }
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [data, setData] = useState<UserData>({
@@ -65,7 +72,7 @@ const Navbar: React.FC = () => {
 
   const handleSaveChanges = async () => {
     const responseAction = await editProfile(data, user?.username);
-    console.log(responseAction)
+    // console.log(responseAction)
     handleCloseModal();
   };
 

@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react'; // Import useRef
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { RootState } from '../app/store';
-import { getCurrentChannel } from '../app/authService/channelAPI';
+import { channelActivity, getCurrentChannel } from '../app/authService/channelAPI';
 import { createMessage, fetchMessagesByChannelId } from '../app/authService/messageAPI';
 import { connectSocket } from '../app/socket/socket';
 import { FaBars, FaTimes } from 'react-icons/fa';
@@ -36,16 +34,36 @@ const Chat: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
-  const messagesEndRef = useRef<HTMLDivElement | null>(null); // Create a ref for the messages end
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const [members, setMembers] = useState<Member[]>([
-    { memberId: '1', name: 'John Doe', isActive: true },
-    { memberId: '2', name: 'Jane Smith', isActive: false },
-    { memberId: '3', name: 'Alice Johnson', isActive: true },
-  ]);
+  const [members, setMembers] = useState<Member[]>([]);
+  const currentUser = JSON.parse(localStorage.getItem("userDetails"));
+  // console.log("currentUser", currentUser);
+  
+  // Now you can safely access the api_key
+  const apiKey = currentUser?.api_key || ''; 
+  console.log()
 
-  const currentUser = useSelector((state: RootState) => state.auth.result);
-  const apiKey = useSelector((state: RootState) => state.auth.api_key);
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const data = await channelActivity(channelId, apiKey);
+        const memberData = data.result.map((user: any) => ({
+          memberId: user.id,
+          name: user.username || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+          isActive: user.is_active,
+        }));
+        setMembers(memberData);
+      } catch (err) {
+        console.error('Failed to fetch members:', err);
+        setError('Failed to load members');
+      }
+    };
+
+    if (channelId) {
+      fetchMembers();
+    }
+  }, [channelId, apiKey]);
 
   useEffect(() => {
     const fetchChannelDetails = async () => {
@@ -88,12 +106,11 @@ const Chat: React.FC = () => {
   useEffect(() => {
     const handleNewMessage = (message: Message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
-      scrollToBottom(); // Scroll to the bottom whenever a new message arrives
+      scrollToBottom();
     };
 
-    const socketClient = connectSocket(handleNewMessage);
+    const socketClient = connectSocket(handleNewMessage, channelId);
 
-    // Cleanup on unmount
     return () => {
       socketClient.disconnect();
     };
@@ -101,7 +118,7 @@ const Chat: React.FC = () => {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth',  });
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -112,7 +129,7 @@ const Chat: React.FC = () => {
       if (response) {
         setMessages((prevMessages) => [...prevMessages, response.data]);
         setText('');
-        scrollToBottom(); // Scroll to bottom after sending a new message
+        scrollToBottom();
       } else {
         setError('Failed to send message');
       }
@@ -180,7 +197,7 @@ const Chat: React.FC = () => {
           ) : (
             <p className="text-gray-500 text-center">No messages yet. Start the conversation!</p>
           )}
-          <div ref={messagesEndRef} /> {/* This empty div helps in scrolling to the bottom */}
+          <div ref={messagesEndRef} />
         </div>
         <div className="bg-white p-4 flex items-center border-t border-gray-300 shadow-inner rounded-b-xl">
           <input

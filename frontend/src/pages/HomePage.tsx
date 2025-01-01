@@ -68,22 +68,22 @@ const HomePage: React.FC = () => {
               <h3 className="text-xl font-semibold text-gray-700 mb-2">2. Cross-Platform Sync</h3>
               <p className="text-gray-500">Sync your chats across all devices seamlessly – mobile, tablet, or desktop.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-lg">
+            {/* <div className="bg-white p-6 rounded-lg shadow-lg">
               <h3 className="text-xl font-semibold text-gray-700 mb-2">3. Voice & Video Calls</h3>
               <p className="text-gray-500">High-quality voice and video calls to connect with anyone around the world.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-lg">
+            </div> */}
+            {/* <div className="bg-white p-6 rounded-lg shadow-lg">
               <h3 className="text-xl font-semibold text-gray-700 mb-2">4. Customizable Themes</h3>
               <p className="text-gray-500">Personalize your chat experience with customizable themes and layouts.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-lg">
+            </div> */}
+            {/* <div className="bg-white p-6 rounded-lg shadow-lg">
               <h3 className="text-xl font-semibold text-gray-700 mb-2">5. Push Notifications</h3>
               <p className="text-gray-500">Never miss a message with real-time push notifications on all your devices.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <h3 className="text-xl font-semibold text-gray-700 mb-2">6. AI-Powered Chatbots</h3>
               <p className="text-gray-500">Automate responses and engage with AI chatbots for customer service or fun.</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>

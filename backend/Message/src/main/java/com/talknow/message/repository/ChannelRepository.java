@@ -29,5 +29,8 @@ public interface ChannelRepository extends JpaRepository<Channel, String> {
     @Query(value = "SELECT channel_id, channel_name, created_by, channel_open, created_time FROM get_user_channels_by_user_id(:userId)", nativeQuery = true)
     List<Tuple> findChannelsForUserByUserId(String userId);
 
+    @Query(value = "SELECT * FROM get_user_ids_by_channel(:channelId)", nativeQuery = true)
+    List<String> findUserIdsByChannelId(@Param("channelId") String channelId);
+
 
 }

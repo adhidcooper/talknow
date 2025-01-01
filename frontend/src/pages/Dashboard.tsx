@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { RootState } from '../app/store';
-import { fetchUser } from '../app/authService/AuthSlice';
 import { useSelector } from 'react-redux';
+import { fetchUser } from '../app/authService/AuthSlice';
+import { RootState } from '../app/store';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../app/hooks/hooks';
 import Navbar from '../components/Navbar';
@@ -11,16 +11,13 @@ import ChannelCreator from '../components/ChannelCreator';
 import FindChannels from '../components/FindChannels';
 
 const Dashboard: React.FC = () => {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const handleChannelClick = (channelId: string) => {
     navigate(`/chat/${channelId}`);
   };
-  
-  const user = useSelector((state: RootState) => state.auth.result);
+
   const apiKey = useSelector((state: RootState) => state.auth.api_key);
-  const loading = useSelector((state: RootState) => state.auth.loading);
-  const fetchError = useSelector((state: RootState) => state.auth.error);
   
   useEffect(() => {
     if (apiKey) {
@@ -29,6 +26,12 @@ const Dashboard: React.FC = () => {
       navigate('/login');
     }
   }, [apiKey, dispatch, navigate]);
+  
+  const user = useSelector((state: RootState) => state.auth.result);
+  console.log("++++++",user)
+  const loading = user.loading;
+  const fetchError = user.error;
+  
 
   if (loading) return <div className="flex justify-center items-center h-screen text-lg">Loading...</div>;
   if (fetchError) return <div className="flex justify-center items-center h-screen text-lg text-red-500">Error: {fetchError}</div>;

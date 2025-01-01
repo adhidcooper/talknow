@@ -4,7 +4,7 @@ import { login as loginAPI, signup as signupAPI, fetchUserInfo } from './authAPI
 interface AuthState {
     api_key: string | null;
     message: string | null;
-    result: Record<string, any> | null; // Change to Record for better typing
+    result: object | null; // Change to Record for better typing
     loading: boolean;
     error: string | null;
 }
@@ -12,7 +12,7 @@ interface AuthState {
 const initialState: AuthState = {
     api_key: null,
     message: null,
-    result: null,
+    result: {},
     loading: false,
     error: null,
 };
@@ -24,7 +24,7 @@ export const login = createAsyncThunk('auth/login', async (credentials: { userna
     return {
         api_key: response.api_key,
         message: response.message,
-        result: { ...response.result }, // Ensure result is a plain object
+        authenticated: response.authenticated // Ensure result is a plain object
     };
 });
 
@@ -39,9 +39,10 @@ export const fetchUser = createAsyncThunk('auth/fetchUser', async (api_key: stri
     const response = await fetchUserInfo(api_key);
     return {
         message: response.message,
-        result: { ...response.result }, // Ensure result is a plain object
+        result: { ...response.result },
     };
 });
+
 
 const authSlice = createSlice({
     name: 'auth',
